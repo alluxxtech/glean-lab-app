@@ -228,7 +228,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 });
 
 app.listen(3001, () => {
-  console.log("\n🚀 Приложение запущено!");
-  console.log("   Сервер (API): http://localhost:3001");
+  console.log("\n🚀 App is running!");
+  console.log("   Server (API): http://localhost:3001");
   console.log("   UI:           http://localhost:3006\n");
 });
