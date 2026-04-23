@@ -43,8 +43,14 @@ export default function App() {
       .then((r) => r.json())
       .then((list: Datasource[]) => {
         setDatasources(list);
-        if (list.length === 1 && !localStorage.getItem("activeDatasource")) {
+        const saved = localStorage.getItem("activeDatasource");
+        if (saved && list.find((d) => d.name === saved)) {
+          // valid saved selection — keep it
+        } else if (list.length > 0) {
           selectDatasource(list[0].name);
+        } else {
+          setActiveDatasource(null);
+          localStorage.removeItem("activeDatasource");
         }
       });
   }, []);
