@@ -3,7 +3,7 @@ import express from "express";
 import multer from "multer";
 import { parse } from "csv-parse/sync";
 import { randomUUID } from "crypto";
-import { readFileSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
 const app = express();
@@ -27,6 +27,10 @@ const CLIENT_BASE = `https://${INSTANCE}-be.glean.com/rest/api/v1`;
 
 const DS_FILE = resolve("data/datasources.json");
 const DOCS_FILE = resolve("data/documents.json");
+
+// Initialize empty data files if they don't exist
+if (!existsSync(DS_FILE)) writeFileSync(DS_FILE, "[]");
+if (!existsSync(DOCS_FILE)) writeFileSync(DOCS_FILE, "{}");
 
 interface DatasourceRecord {
   name: string;

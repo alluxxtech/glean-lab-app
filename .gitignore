@@ -18,3 +18,7 @@ npm-debug.log*
 
 # Claude context
 .claude/
+
+# Data files (contain user-specific indexed content)
+data/datasources.json
+data/documents.json
