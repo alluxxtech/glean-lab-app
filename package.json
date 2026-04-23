@@ -7,9 +7,9 @@
     "2:index": "npx tsx src/2-index-documents.ts",
     "3:check": "npx tsx src/3-check-status.ts",
     "4:search": "npx tsx src/4-search.ts",
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:app\"",
+    "dev": "concurrently --raw \"npx tsx watch server/index.ts\" \"cd app && npx vite\"",
     "dev:server": "npx tsx watch server/index.ts",
-    "dev:app": "cd app && npm run dev"
+    "dev:app": "cd app && npx vite"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
