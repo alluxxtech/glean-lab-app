@@ -11,41 +11,41 @@ interface Props {
 export default function DocumentStatus({ docIds, datasource, onUploadClick, disabled }: Props) {
   const [statuses, setStatuses] = useState<Record<string, string>>({});
   const [refreshing, setRefreshing] = useState(false);
-  const cancelRef = useRef<() => void>();
+  const abortRef = useRef<AbortController>();
 
-  async function runRefresh(ds: string, ids: string[]) {
-    let cancelled = false;
-    cancelRef.current = () => { cancelled = true; };
+  async function refresh() {
+    if (refreshing || !datasource || docIds.length === 0) return;
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     setRefreshing(true);
-    setStatuses(ids.reduce<Record<string, string>>((acc, id) => ({ ...acc, [id]: "UPDATING" }), {}));
+    setStatuses(docIds.reduce<Record<string, string>>((acc, id) => ({ ...acc, [id]: "UPDATING" }), {}));
 
-    for (const id of ids) {
-      if (cancelled) break;
-      try {
-        const res = await fetch(`/api/status/one?id=${encodeURIComponent(id)}&datasource=${encodeURIComponent(ds)}`);
-        const data: { id: string; status: string } = await res.json();
-        if (!cancelled) setStatuses((prev) => ({ ...prev, [data.id]: data.status }));
-        if (!cancelled) await new Promise((r) => setTimeout(r, 1100));
-      } catch {
-        if (!cancelled) setStatuses((prev) => ({ ...prev, [id]: "ERROR" }));
+    try {
+      const res = await fetch("/api/status/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: docIds, datasource }),
+        signal: controller.signal,
+      });
+      const data: Record<string, string> = await res.json();
+      if (!controller.signal.aborted) setStatuses(data);
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        setStatuses(docIds.reduce<Record<string, string>>((acc, id) => ({ ...acc, [id]: "ERROR" }), {}));
       }
+    } finally {
+      if (!controller.signal.aborted) setRefreshing(false);
     }
-
-    if (!cancelled) setRefreshing(false);
-  }
-
-  function refresh() {
-    if (refreshing || !datasource || docIds.length === 0) return;
-    cancelRef.current?.();
-    runRefresh(datasource, docIds);
   }
 
   useEffect(() => {
-    cancelRef.current?.();
+    abortRef.current?.abort();
     setStatuses({});
-    if (datasource && docIds.length > 0) runRefresh(datasource, docIds);
-    return () => cancelRef.current?.();
+    if (datasource && docIds.length > 0) refresh();
+    return () => abortRef.current?.abort();
   }, [datasource, docIds.join(",")]);
 
   return (

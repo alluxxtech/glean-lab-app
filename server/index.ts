@@ -139,18 +139,24 @@ app.post("/api/search", async (req, res) => {
 
 // ── Document status ───────────────────────────────────────────────────────────
 
-app.get("/api/status/one", async (req, res) => {
-  const { id: docId, datasource } = req.query as { id: string; datasource: string };
-  if (!docId || !datasource) { res.status(400).json({ error: "id and datasource required" }); return; }
+app.post("/api/status/bulk", async (req, res) => {
+  const { ids, datasource } = req.body as { ids: string[]; datasource: string };
+  if (!ids?.length || !datasource) { res.status(400).json({ error: "ids and datasource required" }); return; }
 
   try {
-    const data = await gleanIndexPost(`/debug/${datasource}/document`, {
-      objectType: "Article",
-      docId,
-    }) as any;
-    res.json({ id: docId, status: data?.status?.indexingStatus ?? "UNKNOWN" });
+    const data = await gleanIndexPost(`/debug/${datasource}/documents`, {
+      debugDocuments: ids.map((id) => ({ objectType: "Article", docId: id })),
+    }) as { documentStatuses?: { docId?: string; debugInfo?: { status?: { indexingStatus?: string } } }[] };
+
+    const statuses: Record<string, string> = {};
+    for (const item of data?.documentStatuses ?? []) {
+      if (item.docId) statuses[item.docId] = item.debugInfo?.status?.indexingStatus ?? "UNKNOWN";
+    }
+    res.json(statuses);
   } catch {
-    res.json({ id: docId, status: "ERROR" });
+    const fallback: Record<string, string> = {};
+    ids.forEach((id) => { fallback[id] = "ERROR"; });
+    res.json(fallback);
   }
 });
 
