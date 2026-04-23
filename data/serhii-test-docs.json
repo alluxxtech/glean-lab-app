@@ -1,0 +1,23 @@
+[
+  {
+    "id": "st-001",
+    "title": "ST-001: Getting Started with SerhiiTest",
+    "body": "Welcome to the SerhiiTest datasource. This is the first test document. It contains basic onboarding information for new team members. Contact: serhii@serhii.devlab.capgemini.internal for any questions.",
+    "author": "serhii@serhii.devlab.capgemini.internal",
+    "url": "https://serhii.devlab.capgemini.internal/docs/st-001"
+  },
+  {
+    "id": "st-002",
+    "title": "ST-002: API Reference Overview",
+    "body": "This document covers the core API endpoints available in the SerhiiTest environment. Base URL: api.serhii.devlab.capgemini.internal. Authentication: Bearer token via header. Rate limit: 100 requests per minute. Contact: api-support@serhii.devlab.capgemini.internal.",
+    "author": "serhii@serhii.devlab.capgemini.internal",
+    "url": "https://serhii.devlab.capgemini.internal/docs/st-002"
+  },
+  {
+    "id": "st-003",
+    "title": "ST-003: Deployment Checklist",
+    "body": "Before deploying to production in SerhiiTest environment: 1) Run all unit tests via 'npm test'. 2) Check build passes in CI at ci.serhii.devlab.capgemini.internal. 3) Create a release tag in GitLab. 4) Notify the team in #serhiitest-deploys Slack channel. Contact: devops@serhii.devlab.capgemini.internal.",
+    "author": "serhii@serhii.devlab.capgemini.internal",
+    "url": "https://serhii.devlab.capgemini.internal/docs/st-003"
+  }
+]

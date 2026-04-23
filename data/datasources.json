@@ -1,0 +1,16 @@
+[
+  {
+    "name": "capgeminiSerhiiDevLab",
+    "displayName": "Capgemini Serhii Dev Lab",
+    "urlRegex": "^https://serhii\\.devlab\\.capgemini\\.internal/.*",
+    "category": "PUBLISHED_CONTENT",
+    "createdAt": "2026-04-22T00:00:00.000Z"
+  },
+  {
+    "name": "serhiiTest",
+    "displayName": "serhiiTest",
+    "urlRegex": "^https://serhii\\.devlab\\.capgemini\\.internal/.*",
+    "category": "PUBLISHED_CONTENT",
+    "createdAt": "2026-04-23T10:30:53.013Z"
+  }
+]
