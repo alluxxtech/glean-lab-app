@@ -137,6 +137,18 @@ app.post("/api/search", async (req, res) => {
   }
 });
 
+// ── Datasource status ─────────────────────────────────────────────────────────
+
+app.get("/api/datasources/:name/status", async (req, res) => {
+  const { name } = req.params;
+  try {
+    const data = await gleanIndexPost(`/debug/${name}/status`, {}) as { datasourceVisibility?: string };
+    res.json({ visibility: data?.datasourceVisibility ?? "UNKNOWN" });
+  } catch {
+    res.json({ visibility: "UNKNOWN" });
+  }
+});
+
 // ── Document status ───────────────────────────────────────────────────────────
 
 app.post("/api/status/bulk", async (req, res) => {

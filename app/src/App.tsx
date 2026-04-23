@@ -19,6 +19,20 @@ interface Datasource {
   createdAt: string;
 }
 
+function VisibilityBadge({ visibility }: { visibility: string }) {
+  const map: Record<string, { label: string; color: string; bg: string }> = {
+    ENABLED_FOR_ALL:        { label: "Published", color: "#16a34a", bg: "#dcfce7" },
+    ENABLED_FOR_TEST_GROUP: { label: "Test only",  color: "#d97706", bg: "#fef9c3" },
+    NOT_ENABLED:            { label: "Not published", color: "#dc2626", bg: "#fee2e2" },
+  };
+  const style = map[visibility] ?? { label: visibility, color: "#6b7280", bg: "#f3f4f6" };
+  return (
+    <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 20, background: style.bg, color: style.color }}>
+      {style.label}
+    </span>
+  );
+}
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -29,6 +43,8 @@ export default function App() {
   const [activeDatasource, setActiveDatasource] = useState<string | null>(() =>
     localStorage.getItem("activeDatasource"),
   );
+
+  const [dsVisibility, setDsVisibility] = useState<string | null>(null);
 
   const [showUpload, setShowUpload] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
@@ -60,6 +76,11 @@ export default function App() {
     fetch(`/api/documents?datasource=${activeDatasource}`)
       .then((r) => r.json())
       .then((ids: string[]) => setDocIds((prev) => ({ ...prev, [activeDatasource]: ids })));
+
+    setDsVisibility(null);
+    fetch(`/api/datasources/${activeDatasource}/status`)
+      .then((r) => r.json())
+      .then((data: { visibility: string }) => setDsVisibility(data.visibility));
   }, [activeDatasource]);
 
   useEffect(() => {
@@ -126,6 +147,7 @@ export default function App() {
   }
 
   const activeDisplayName = datasources.find((d) => d.name === activeDatasource)?.displayName ?? activeDatasource;
+  const isPublished = dsVisibility === "ENABLED_FOR_ALL" || dsVisibility === "ENABLED_FOR_TEST_GROUP";
 
   return (
     <div style={s.app}>
@@ -137,7 +159,12 @@ export default function App() {
           <div style={s.logoSub}>Powered by Glean</div>
         </div>
         <div style={s.headerRight}>
-          {activeDatasource && <span style={s.activeDsBadge}>📂 {activeDisplayName}</span>}
+          {activeDatasource && (
+            <span style={{ ...s.activeDsBadge, marginRight: 24 }}>
+              📂 {activeDisplayName}
+              {dsVisibility && <VisibilityBadge visibility={dsVisibility} />}
+            </span>
+          )}
           <button
             style={{ ...s.headerBtn, ...(!activeDatasource ? { opacity: 0.4, cursor: "not-allowed" } : {}) }}
             onClick={() => activeDatasource && setShowSwitch(true)}
@@ -157,12 +184,12 @@ export default function App() {
             <div style={s.searchBar}>
               <span style={s.searchIcon}>🔍</span>
               <input
-                style={{ ...s.searchInput, ...(!activeDatasource ? s.searchInputDisabled : {}) }}
+                style={{ ...s.searchInput, ...(!activeDatasource || !isPublished ? s.searchInputDisabled : {}) }}
                 type="text"
-                placeholder={activeDatasource ? "Search documents..." : "Select a datasource to search"}
+                placeholder={!activeDatasource ? "Select a datasource to search" : !isPublished ? "Datasource is not published" : "Search documents..."}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                disabled={!activeDatasource}
+                disabled={!activeDatasource || !isPublished}
                 autoFocus
               />
             </div>
@@ -181,8 +208,8 @@ export default function App() {
         <DocumentStatus
           docIds={activeDatasource ? docIds[activeDatasource] ?? [] : []}
           datasource={activeDatasource}
-          onUploadClick={() => activeDatasource && setShowUpload(true)}
-          disabled={!activeDatasource}
+          onUploadClick={() => activeDatasource && isPublished && setShowUpload(true)}
+          disabled={!activeDatasource || !isPublished}
         />
       </div>
 
