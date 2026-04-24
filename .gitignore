@@ -22,3 +22,5 @@ npm-debug.log*
 # Data files (contain user-specific indexed content)
 data/datasources.json
 data/documents.json
+data/test-docs.json
+data/serhii-test-docs.json

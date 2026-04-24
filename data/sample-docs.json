@@ -1,0 +1,37 @@
+[
+  {
+    "id": "sample-001",
+    "title": "Getting Started Guide",
+    "body": "Welcome to the platform. This guide covers the basic setup steps for new users. Follow each section carefully to get up and running quickly.",
+    "author": "admin@your-domain.internal",
+    "url": "https://your-domain.internal/docs/sample-001"
+  },
+  {
+    "id": "sample-002",
+    "title": "API Reference",
+    "body": "This document describes the available API endpoints. Base URL: api.your-domain.internal. Authentication is done via Bearer token in the Authorization header. Rate limit: 100 requests per minute.",
+    "author": "admin@your-domain.internal",
+    "url": "https://your-domain.internal/docs/sample-002"
+  },
+  {
+    "id": "sample-003",
+    "title": "Deployment Checklist",
+    "body": "Before deploying to production: 1) Run all unit tests. 2) Verify CI pipeline passes. 3) Create a release tag. 4) Notify the team in the #deployments channel.",
+    "author": "admin@your-domain.internal",
+    "url": "https://your-domain.internal/docs/sample-003"
+  },
+  {
+    "id": "sample-004",
+    "title": "Troubleshooting FAQ",
+    "body": "Q: Documents not appearing in search? A: Wait 2-5 minutes after indexing. Q: Upload fails? A: Check that document URLs match the datasource URL regex pattern.",
+    "author": "admin@your-domain.internal",
+    "url": "https://your-domain.internal/docs/sample-004"
+  },
+  {
+    "id": "sample-005",
+    "title": "Security Policy",
+    "body": "All internal documents are access-controlled. Do not share API tokens. Rotate tokens every 90 days. Report any suspected breach to security@your-domain.internal immediately.",
+    "author": "admin@your-domain.internal",
+    "url": "https://your-domain.internal/docs/sample-005"
+  }
+]
